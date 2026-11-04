@@ -1,6 +1,15 @@
 {
-  "dependencies": {
-    "dotenv": "^18.0.9",
-    "mongoose": "^9.11.4"
-  }
+  "name": "sga-monorepo",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Sistema de Gestión Académica (SGA) - Programación IV",
+  "scripts": {
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend run dev",
+    "seed": "node backend/crearUsuario.js",
+    "frontend": "npm --prefix frontend-react run dev",
+    "build": "npm --prefix frontend-react run build"
+  },
+  "author": "Elian Gregoret",
+  "license": "MIT"
 }

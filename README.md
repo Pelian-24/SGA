@@ -1,99 +1,98 @@
 # Sistema de Gestión Académica (SGA)
 
-Proyecto desarrollado durante la materia Programación IV.
+> **Un producto de EG Industries** — Proyecto desarrollado durante la materia **Programación IV** (UTN FRRQ).
+
+---
 
 ## Descripción
 
-El Sistema de Gestión Académica (SGA) es una aplicación web que permitirá administrar alumnos, docentes, cursos y materias.
+El **Sistema de Gestión Académica (SGA)** es una aplicación web Full-Stack que permite administrar alumnos, docentes y autenticación de usuarios mediante una API REST en Node.js/Express conectada a **MongoDB** y consumida tanto desde un Frontend en **React + Material UI** como desde un Frontend clásico en HTML5/CSS3/JavaScript.
 
-Durante el desarrollo del proyecto se incorporarán progresivamente nuevas tecnologías y funcionalidades.
+---
 
+## Stack Tecnológico
 
-## Objetivos
+| Capa | Tecnologías |
+|---|---|
+| **Frontend Principal (SPA)** | React 19, Vite 8, Material UI (MUI v9), React Router DOM v7 |
+| **Frontend Clásico** | HTML5, CSS3 (Variables CSS + Responsive Mobile-First), JavaScript ES6+ (`fetch` API) |
+| **Backend (API REST)** | Node.js, Express 5, CORS, Dotenv, Bcrypt |
+| **Base de Datos** | MongoDB Community Server v9.0 + Mongoose 9 + MongoDB Compass |
 
-- Gestionar alumnos.
-- Gestionar docentes.
-- Gestionar cursos.
-- Gestionar materias.
-- Implementar autenticación de usuarios.
-- Consumir una API REST.
-- Persistir la información en MongoDB.
+---
 
+## Estructura del Proyecto
 
-## Tecnologías
-
-Actualmente:
-
-- HTML5
-- JavaScript
-- CSS
-- express
-- Node.js
-- MongoDB
-
-
-Próximamente:
-- React
-
-
-## Estado del proyecto
-
-- Versión: 
-Clase 12 - Estructura actual
+```text
 SGA/
-frontend
- ├── index.html
- ├── alumnos.html
- ├── docentes.html
- │
- ├── css/
- │   └── estilos.css
- │
- └── js/
-      ├── alumnos.js
-      └── docentes.js
-backend
- ├── config/
- |    └── database.js
- ├── controllers/
- |    └── alumnos.controller.js
- ├── data/
- |    └── alumnos.js
- ├── models/
- |    └── Alumno.js
- ├── routes/
-      └── alumnos.routes.js
+├── backend/
+│   ├── config/
+│   │   └── database.js            # Conexión a MongoDB mediante Mongoose
+│   ├── controllers/
+│   │   ├── alumnos.controller.js  # Lógica CRUD de alumnos
+│   │   ├── docentes.controller.js # Lógica CRUD de docentes
+│   │   └── authController.js      # Autenticación con bcrypt
+│   ├── models/
+│   │   ├── Alumno.js              # Esquema y modelo de colección "alumnos"
+│   │   ├── Docente.js             # Esquema y modelo de colección "docentes"
+│   │   └── Usuario.js             # Esquema y modelo de colección "usuarios"
+│   ├── routes/
+│   │   ├── alumnos.routes.js
+│   │   ├── docentes.routes.js
+│   │   └── authRoutes.js
+│   ├── .env.example               # Plantilla pública de variables de entorno
+│   ├── crearUsuario.js            # Script de inicialización (seed) para MongoDB
+│   ├── pruebas.http               # Casos de prueba para REST Client
+│   └── server.js                  # Punto de entrada de la API REST (Puerto 3000)
+├── frontend/                      # Interfaz clásica (HTML + CSS + JS Vanilla)
+│   ├── CSS/estilos.css
+│   ├── JS/
+│   │   ├── alumnos.js
+│   │   ├── docentes.js
+│   │   └── ui.js
+│   ├── index.html
+│   ├── alumnos.html
+│   └── docentes.html
+└── frontend-react/                # Aplicación SPA en React + Vite + Material UI
+    ├── src/
+    │   ├── components/            # Header, Footer, FormularioA, FormularioD, ListaAlumnos, ListaDocentes, SelectorTema
+    │   ├── layouts/LayoutPpal.jsx
+    │   ├── pages/                 # Inicio, Alumnos, Docentes, FAQ, Login
+    │   ├── App.jsx
+    │   ├── main.jsx
+    │   └── tema.js
+    └── package.json
+```
 
-## Estado actual
-- Página de inicio y navegación entre módulos
-- Módulo alumnos docentes
-- CRUD alumnos/docentes
-- Validaciones de formularios
-- Persistencia mediante localStorage
-- Organización del código y refactorización
-- Separación inicial entre Frontend y Backend
-- Implementación de validaciones para los datos recibidos mediante req.body
-- Uso de status 400 para datos inválidos
-- status 404 para alumno no encontrado
-- status 201 para registrar nuevo alumno
-- Manejo básico de errores en la operaciones del CRUD.
-- Instalación de mongoose
-- Creación de la conexión con MongoDB en config/database.js
-- Creación del Schema y modelo Alumno
-- Reemplazo del array en memoria por una colección de MongoDB
-- Modificación de GET /alumnos para consultar MongoDB mediante mongoose
-- Prueba de la API con datos almacenados en MongoDB
+---
 
+## Cómo Ejecutar el Proyecto y Conectar con MongoDB Compass
 
-## Almacenamiento
+1. **Conectar MongoDB Compass:**
+   - Abrir **MongoDB Compass** y conectar a `mongodb://localhost:27017/`.
+   - La base de datos utilizada es **`basededatos`** con las colecciones `alumnos`, `docentes` y `usuarios`.
 
-- localStorage
-- JSON.stringify()
-- JSON.parse()
-- MongoDB
+2. **Inicializar datos de prueba en MongoDB (Seed):**
+   ```bash
+   npm run seed
+   ```
+   *(Crea el usuario `admin@sga.com` con clave `ClaveDePrueba123!` y registros iniciales en `alumnos` y `docentes`).*
 
-## Autor
+3. **Iniciar el Servidor Backend (Puerto 3000):**
+   ```bash
+   npm run dev
+   ```
 
-Elian Gregoret
+4. **Iniciar el Frontend en React (Puerto 5173):**
+   ```bash
+   npm run frontend
+   ```
 
-Programación IV
+---
+
+## Autor y Aviso Legal
+
+* **Autor:** Elian Gregoret — Programación IV.
+* **Marca:** Un producto de **EG Industries**.
+* **Copyright:** Copyright © 2026 EG Industries / Programación IV - FRRQ. Todos los derechos reservados. Ver archivo `LICENSE` en la raíz del proyecto.
+* **Disclaimer:** Este software se proporciona "tal cual", sin garantías de ningún tipo, expresas ni implícitas.

@@ -1,8 +1,27 @@
-# Visual Studio Code
-.vscode/
-
-# Variables de entorno
-.env
-
-# Node.js
+# Dependencias Node.js
 node_modules/
+/package-lock.json
+
+# Variables de entorno y secretos
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Compilados y builds
+dist/
+dist-ssr/
+build/
+out/
+
+# Logs y archivos temporales del sistema
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Configuraciones locales del IDE
+.vscode/
+.idea/
