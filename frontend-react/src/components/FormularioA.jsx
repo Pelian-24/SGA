@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState } from "react"
 import Alert from "@mui/material/Alert"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Paper from "@mui/material/Paper"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
+
 const API_ALUMNOS = "http://localhost:3000/alumnos"
 
-function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
+// FORMULARIO DE ALUMNOS: Permite crear (POST) o editar (PUT) un alumno en MongoDB
+function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }) {
     const [formulario, setFormulario] = useState({
         legajo: String(alumnoEditar?.legajo ?? ""),
         nombre: alumnoEditar?.nombre ?? "",
@@ -18,8 +20,7 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
     const [guardando, setGuardando] = useState(false)
 
     function manejarCambio(e) {
-        const { name, value} = e.target
-
+        const { name, value } = e.target
         setFormulario({
             ...formulario,
             [name]: value
@@ -30,24 +31,26 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
         e.preventDefault()
         setError("")
         setGuardando(true)
-        
-    const alumno = {
-        ...formulario,
-        legajo: Number(formulario.legajo)
-    }
-    const editando = Boolean(alumnoEditar)
-    const url = editando 
-                ? `${API_ALUMNOS}/${alumnoEditar.legajo}`
-                : API_ALUMNOS
+
+        const alumno = {
+            ...formulario,
+            legajo: Number(formulario.legajo)
+        }
+        const editando = Boolean(alumnoEditar)
+        const url = editando
+            ? `${API_ALUMNOS}/${alumnoEditar.legajo}`
+            : API_ALUMNOS
+
         try {
             const respuesta = await fetch(url, {
                 method: editando ? "PUT" : "POST",
-                headers: {"Content-Type":"application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(alumno)
             })
 
             if (!respuesta.ok) {
-                throw new Error(`No se pudo guardar el alumno. Estado HTTP: ${respuesta.status}`)
+                const datosError = await respuesta.json().catch(() => ({}))
+                throw new Error(datosError.mensaje || `No se pudo guardar el alumno (Estado HTTP: ${respuesta.status})`)
             }
 
             setFormulario({
@@ -57,17 +60,19 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
                 correo: ""
             })
             onAlumnoCreado()
-        } catch (error) {
-            console.error("Error al guardar:", error)
-            setError(error.message || "No se pudo conectar con el servidor")
+        } catch (err) {
+            console.error("Error al guardar alumno:", err)
+            setError(err.message || "No se pudo conectar con el servidor")
         } finally {
             setGuardando(false)
         }
     }
-    function cancelar(){
+
+    function cancelar() {
         onCancelar()
     }
-    return(
+
+    return (
         <Paper
             component="section"
             elevation={0}
@@ -81,7 +86,7 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
             }}
         >
             <Typography component="h2" variant="h5" sx={{ mb: 2.5, fontWeight: 700 }}>
-                {alumnoEditar ? "Editar alumno" : "Nuevo Alumno"}
+                {alumnoEditar ? "Editar Alumno" : "Nuevo Alumno"}
             </Typography>
             <Box
                 component="form"
@@ -96,8 +101,10 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
                     id="legajo"
                     name="legajo"
                     label="Legajo"
+                    type="number"
                     value={formulario.legajo}
                     onChange={manejarCambio}
+                    disabled={Boolean(alumnoEditar)}
                     required
                     fullWidth
                 />
@@ -122,7 +129,8 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
                 <TextField
                     id="correo"
                     name="correo"
-                    label="Correo"
+                    label="Correo electrónico"
+                    type="email"
                     value={formulario.correo}
                     onChange={manejarCambio}
                     required
@@ -165,4 +173,5 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }){
         </Paper>
     )
 }
+
 export default FormularioA

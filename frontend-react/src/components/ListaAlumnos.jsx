@@ -6,52 +6,53 @@ import Chip from "@mui/material/Chip"
 import Paper from "@mui/material/Paper"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
+
 const API_ALUMNOS = "http://localhost:3000/alumnos"
 
+// LISTA DE ALUMNOS: Consulta y renderiza los alumnos almacenados en la colección "alumnos" de MongoDB
 export function ListaAlumnos({ actualizar, onAlumnoCreado, onEditarAlumno }) {
     const [alumnos, setAlumnos] = useState([])
     const [cargando, setCargando] = useState(true)
     const [error, setError] = useState("")
 
-    async function eliminarAlumno(legajo){
+    async function eliminarAlumno(legajo) {
         const confirmar = window.confirm("¿Seguro que querés eliminar este alumno?")
         if (!confirmar) {
             return
         }
         try {
-            const respuesta = await fetch(`${API_ALUMNOS}/${legajo}`, 
-                { method: "DELETE" }
-            )
+            const respuesta = await fetch(`${API_ALUMNOS}/${legajo}`, {
+                method: "DELETE"
+            })
             if (!respuesta.ok) {
                 throw new Error(`No se pudo eliminar. Estado HTTP: ${respuesta.status}`)
             }
             onAlumnoCreado()
-        } catch (error) {
-            console.error("Error al eliminar: ", error)
-            alert(error.message || "No se pudo elimnar alumno")
+        } catch (err) {
+            console.error("Error al eliminar alumno:", err)
+            alert(err.message || "No se pudo eliminar el alumno")
         }
     }
+
     useEffect(() => {
-        async function cargarAlumnos(){
+        async function cargarAlumnos() {
             setCargando(true)
             setError("")
 
             try {
-            const respuesta = await fetch(API_ALUMNOS)
-
-            if (!respuesta.ok){
-                throw new Error("No se pudo obtener la lista", respuesta.status)
+                const respuesta = await fetch(API_ALUMNOS)
+                if (!respuesta.ok) {
+                    throw new Error(`No se pudo obtener la lista (HTTP ${respuesta.status})`)
+                }
+                const datos = await respuesta.json()
+                setAlumnos(datos)
+            } catch (err) {
+                console.error("Error de conexión al cargar alumnos:", err)
+                setError("No se pudo cargar la lista de alumnos. Verificá que el backend esté activo en el puerto 3000.")
+            } finally {
+                setCargando(false)
             }
-
-            const datos = await respuesta.json()
-            setAlumnos(datos)
-        } catch(error) {
-            console.error("Error de conexión", error)
-            setError("No se pudo cargar la lista de alumnos.")
-        } finally {
-            setCargando(false)
         }
-    }
         cargarAlumnos()
     }, [actualizar])
 
@@ -80,71 +81,69 @@ export function ListaAlumnos({ actualizar, onAlumnoCreado, onEditarAlumno }) {
             <Typography component="h2" variant="h5" sx={{ mb: 2.5, fontWeight: 700 }}>
                 Alumnos
             </Typography>
-            {alumnos.length === 0
-                ? (
-                    <Typography color="text.secondary">
-                        No hay alumnos registrados.
-                    </Typography>
-                )
-                : (
-                    <Stack
-                        component="ul"
-                        spacing={1.5}
-                        sx={{ listStyle: "none", p: 0, m: 0 }}
-                    >
-                        {alumnos.map(alumno => (
-                            <Paper
-                                component="li"
-                                key={alumno.legajo}
-                                elevation={0}
-                                sx={{
-                                    p: { xs: 2, sm: 2.5 },
-                                    border: 1,
-                                    borderColor: "divider",
-                                    borderRadius: 3,
-                                    display: "flex",
-                                    alignItems: { xs: "stretch", sm: "center" },
-                                    justifyContent: "space-between",
-                                    flexDirection: { xs: "column", sm: "row" },
-                                    gap: 2
-                                }}
+            {alumnos.length === 0 ? (
+                <Typography color="text.secondary">
+                    No hay alumnos registrados.
+                </Typography>
+            ) : (
+                <Stack
+                    component="ul"
+                    spacing={1.5}
+                    sx={{ listStyle: "none", p: 0, m: 0 }}
+                >
+                    {alumnos.map((alumno) => (
+                        <Paper
+                            component="li"
+                            key={alumno.legajo}
+                            elevation={0}
+                            sx={{
+                                p: { xs: 2, sm: 2.5 },
+                                border: 1,
+                                borderColor: "divider",
+                                borderRadius: 3,
+                                display: "flex",
+                                alignItems: { xs: "stretch", sm: "center" },
+                                justifyContent: "space-between",
+                                flexDirection: { xs: "column", sm: "row" },
+                                gap: 2
+                            }}
+                        >
+                            <Stack
+                                direction="row"
+                                spacing={1.5}
+                                sx={{ alignItems: "center", flexWrap: "wrap" }}
                             >
-                                <Stack
-                                    direction="row"
-                                    spacing={1.5}
-                                    sx={{ alignItems: "center", flexWrap: "wrap" }}
+                                <Chip label={`Legajo ${alumno.legajo}`} color="primary" variant="outlined" size="small" />
+                                <Box>
+                                    <Typography fontWeight={600}>{alumno.nombre}</Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {alumno.carrera} • {alumno.correo}
+                                    </Typography>
+                                </Box>
+                            </Stack>
+                            <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
+                                <Button
+                                    type="button"
+                                    onClick={() => onEditarAlumno(alumno)}
+                                    variant="outlined"
+                                    size="small"
                                 >
-                                    <Chip label={`Legajo ${alumno.legajo}`} color="primary" variant="outlined" size="small" />
-                                    <Box>
-                                        <Typography fontWeight={600}>{alumno.nombre}</Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            {alumno.carrera}
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                                <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
-                                    <Button
-                                        type="button"
-                                        onClick={() => onEditarAlumno(alumno)}
-                                        variant="outlined"
-                                        size="small"
-                                    >
-                                        Editar
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        onClick={() => eliminarAlumno(alumno.legajo)}
-                                        variant="outlined"
-                                        color="error"
-                                        size="small"
-                                    >
-                                        Eliminar
-                                    </Button>
-                                </Stack>
-                            </Paper>
-                        ))}
-                    </Stack>
-                )}
+                                    Editar
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={() => eliminarAlumno(alumno.legajo)}
+                                    variant="outlined"
+                                    color="error"
+                                    size="small"
+                                >
+                                    Eliminar
+                                </Button>
+                            </Stack>
+                        </Paper>
+                    ))}
+                </Stack>
+            )}
         </Paper>
     )
 }

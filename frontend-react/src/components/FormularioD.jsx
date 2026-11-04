@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState } from "react"
 import { Alert, Box, Button, Paper, TextField, Typography } from "@mui/material"
+
 const API_DOCENTES = "http://localhost:3000/docentes"
 
-function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
+// FORMULARIO DE DOCENTES: Permite crear (POST) o editar (PUT) un docente en MongoDB
+function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }) {
     const [formulario, setFormulario] = useState({
         dni: String(docenteEditar?.dni ?? ""),
         nombre: docenteEditar?.nombre ?? "",
@@ -13,8 +15,7 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
     const [guardando, setGuardando] = useState(false)
 
     function manejarCambio(e) {
-        const { name, value} = e.target
-
+        const { name, value } = e.target
         setFormulario({
             ...formulario,
             [name]: value
@@ -25,24 +26,26 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
         e.preventDefault()
         setError("")
         setGuardando(true)
-        
-    const docente = {
-        ...formulario,
-        dni: Number(formulario.dni)
-    }
-    const editando = Boolean(docenteEditar)
-    const url = editando 
-                ? `${API_DOCENTES}/${docenteEditar.dni}`
-                : API_DOCENTES
+
+        const docente = {
+            ...formulario,
+            dni: Number(formulario.dni)
+        }
+        const editando = Boolean(docenteEditar)
+        const url = editando
+            ? `${API_DOCENTES}/${docenteEditar.dni}`
+            : API_DOCENTES
+
         try {
             const respuesta = await fetch(url, {
                 method: editando ? "PUT" : "POST",
-                headers: {"Content-Type":"application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(docente)
             })
 
             if (!respuesta.ok) {
-                throw new Error(`No se pudo guardar el docente. Estado HTTP: ${respuesta.status}`)
+                const datosError = await respuesta.json().catch(() => ({}))
+                throw new Error(datosError.mensaje || `No se pudo guardar el docente (Estado HTTP: ${respuesta.status})`)
             }
 
             setFormulario({
@@ -52,17 +55,19 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
                 correo: ""
             })
             onDocenteCreado()
-        } catch (error) {
-            console.error("Error al guardar:", error)
-            setError(error.message || "No se pudo conectar con el servidor")
+        } catch (err) {
+            console.error("Error al guardar docente:", err)
+            setError(err.message || "No se pudo conectar con el servidor")
         } finally {
             setGuardando(false)
         }
     }
-    function cancelar(){
+
+    function cancelar() {
         onCancelar()
     }
-    return(
+
+    return (
         <Paper
             component="section"
             elevation={0}
@@ -76,7 +81,7 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
             }}
         >
             <Typography component="h2" variant="h5" sx={{ mb: 2.5, fontWeight: 700 }}>
-                {docenteEditar ? "Editar docente" : "Nuevo Docente"}
+                {docenteEditar ? "Editar Docente" : "Nuevo Docente"}
             </Typography>
             <Box
                 component="form"
@@ -91,8 +96,10 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
                     id="dni"
                     name="dni"
                     label="DNI"
+                    type="number"
                     value={formulario.dni}
                     onChange={manejarCambio}
+                    disabled={Boolean(docenteEditar)}
                     required
                     fullWidth
                 />
@@ -117,7 +124,8 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
                 <TextField
                     id="correo"
                     name="correo"
-                    label="Correo"
+                    label="Correo electrónico"
+                    type="email"
                     value={formulario.correo}
                     onChange={manejarCambio}
                     required
@@ -160,4 +168,5 @@ function FormularioD({ onDocenteCreado, docenteEditar, onCancelar }){
         </Paper>
     )
 }
+
 export default FormularioD
