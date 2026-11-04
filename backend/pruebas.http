@@ -1,60 +1,80 @@
+### Estado general de la API
+GET http://localhost:3000/
+
+### Obtener todos los alumnos
 GET http://localhost:3000/alumnos
 
-###
+### Obtener alumno por legajo
 GET http://localhost:3000/alumnos/1002
 
-###
+### Crear un nuevo alumno
 POST http://localhost:3000/alumnos
 Content-Type: application/json
 
 {
-    "legajo": 1023,
-    "nombre": "Ramón",
-    "carrera": "Sistemas",
-    "correo": "ramon@mail.com"
+    "legajo": 1025,
+    "nombre": "Lucía Pérez",
+    "carrera": "Programación",
+    "correo": "lucia@mail.com"
 }
-###
+
+### Actualizar un alumno existente
 PUT http://localhost:3000/alumnos/1002
 Content-Type: application/json
 
 {
-    "nombre": "Juan Carlos",
+    "nombre": "Juan Carlos Gómez",
     "carrera": "Programación",
     "correo": "juan@mail.com"
 }
 
-###
-DELETE http://localhost:3000/alumnos/1021
+### Eliminar un alumno por legajo
+DELETE http://localhost:3000/alumnos/1025
 
-###
+### Prueba de validación (Error 400 esperado por falta de legajo y correo)
 POST http://localhost:3000/alumnos
 Content-Type: application/json
 
 {
-    "id": 5,
     "nombre": "Rocío",
     "carrera": "Programación"
 }
 
-###
+### Obtener todos los docentes
 GET http://localhost:3000/docentes
 
-###
+### Obtener docente por DNI
+GET http://localhost:3000/docentes/30111222
+
+### Crear un nuevo docente
 POST http://localhost:3000/docentes
 Content-Type: application/json
 
 {
-    "dni": 5222311,
-    "nombre": "Rocío",
-    "especialidad": "Programación",
-    "correo": "rocio@mail.com"
+    "dni": 35222311,
+    "nombre": "Marcos López",
+    "especialidad": "Arquitectura Web",
+    "correo": "marcos@mail.com"
 }
 
-###
+### Actualizar un docente existente
+PUT http://localhost:3000/docentes/35222311
+Content-Type: application/json
+
+{
+    "nombre": "Marcos A. López",
+    "especialidad": "Desarrollo Full Stack",
+    "correo": "marcos.lopez@mail.com"
+}
+
+### Eliminar un docente por DNI
+DELETE http://localhost:3000/docentes/35222311
+
+### Iniciar sesión (Autenticación de Usuario)
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
     "email": "admin@sga.com",
-    "password":"ClaveDePrueba123!"
+    "password": "ClaveDePrueba123!"
 }

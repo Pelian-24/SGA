@@ -1,21 +1,19 @@
-const express = require("express") 
-// const alumnosController = require("../controllers/alumnos.controller")
-const { 
-    obtenerDocentes, 
-    obtenerDocente, 
-    crearDocente, 
-    actualizarDocente, 
-    eliminarDocente } = require("../controllers/docentes.controller")
-const router = express.Router() 
+const express = require("express")
+const {
+    obtenerDocentes,
+    obtenerDocente,
+    crearDocente,
+    actualizarDocente,
+    eliminarDocente
+} = require("../controllers/docentes.controller")
 
-router.get("/", obtenerDocentes) 
+const router = express.Router()
 
-router.get("/:id", obtenerDocente) 
+// RUTAS CRUD DE DOCENTES: Prefijo base "/docentes"
+router.get("/", obtenerDocentes)
+router.get("/:id", obtenerDocente)
+router.post("/", crearDocente)
+router.put("/:id", actualizarDocente)
+router.delete("/:id", eliminarDocente)
 
-router.post("/", crearDocente) 
-
-router.put("/:id", actualizarDocente) 
-
-router.delete("/:id", eliminarDocente) 
-
-module.exports = router 
+module.exports = router

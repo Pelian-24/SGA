@@ -1,19 +1,35 @@
-const mongoose = require("mongoose") 
+const mongoose = require("mongoose")
 
-const alumnoSchema = new mongoose.Schema({ 
-    legajo: {
-        type: Number,
-        unique: true 
+// ESQUEMA DE ALUMNO: Define la estructura y validaciones de los documentos en la colección "alumnos"
+const alumnoSchema = new mongoose.Schema(
+    {
+        legajo: {
+            type: Number,
+            required: true,
+            unique: true
+        },
+        nombre: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        carrera: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        correo: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true
+        }
     },
-    nombre: String,
-    carrera: String,
-    correo: String
-},
-{ 
-    versionKey: false 
-}
+    {
+        versionKey: false
+    }
 )
 
-const Alumno = mongoose.model("Alumno", alumnoSchema) 
+const Alumno = mongoose.model("Alumno", alumnoSchema)
 
-module.exports = Alumno 
+module.exports = Alumno

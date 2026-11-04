@@ -1,19 +1,35 @@
-const mongoose = require("mongoose") 
+const mongoose = require("mongoose")
 
-const docenteSchema = new mongoose.Schema({ 
-    dni: {
-        type: Number,
-        unique: true 
+// ESQUEMA DE DOCENTE: Define la estructura y validaciones de los documentos en la colección "docentes"
+const docenteSchema = new mongoose.Schema(
+    {
+        dni: {
+            type: Number,
+            required: true,
+            unique: true
+        },
+        nombre: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        especialidad: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        correo: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true
+        }
     },
-    nombre: String,
-    especialidad: String,
-    correo: String
-},
-{ 
-    versionKey: false 
-}
+    {
+        versionKey: false
+    }
 )
 
-const Docente = mongoose.model("Docente", docenteSchema) 
+const Docente = mongoose.model("Docente", docenteSchema)
 
-module.exports = Docente 
+module.exports = Docente

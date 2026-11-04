@@ -1,14 +1,20 @@
 {
   "name": "backend",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.2.0",
+  "description": "API REST del Sistema de Gestión Académica (SGA) con Express y MongoDB",
   "main": "server.js",
   "scripts": {
     "start": "node --watch server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "seed": "node crearUsuario.js"
   },
-  "keywords": [],
-  "author": "Irina",
+  "keywords": [
+    "sga",
+    "express",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "Elian",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {

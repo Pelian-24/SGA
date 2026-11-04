@@ -1,30 +1,36 @@
 const mongoose = require("mongoose")
 
-const usuarioSchema = new mongoose.Schema({
-    nombre: {
-        type: String,
-        required: true
-    }, 
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true
+// ESQUEMA DE USUARIO: Gestiona las credenciales y roles de acceso en la colección "usuarios"
+const usuarioSchema = new mongoose.Schema(
+    {
+        nombre: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true
+        },
+        password: {
+            type: String,
+            required: true,
+            select: false
+        },
+        rol: {
+            type: String,
+            enum: ["admin", "usuario"],
+            default: "usuario"
+        }
     },
-    password: {
-        type: String,
-        required: true,
-        select: false
-    },
-    rol: {
-        type: String,
-        enum: ["admin", "usuario"],
-        default: "usuario"
+    {
+        versionKey: false
     }
-}, {
-    versionKey: false
-})
+)
 
 const Usuario = mongoose.model("Usuario", usuarioSchema)
+
 module.exports = Usuario
