@@ -1,23 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link css="stylesheet" href="css/estilos.css">
-    <link css="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <script src="JS/storage.js" defer></script>
-    <script src="JS/ui.js" defer></script>
-    <script src="js/docentes.js" defer></script>
-    <title>SGA - Docentes</title>
-</head>
-<body>
-    <header>
-        <nav>
-            <a href="index.html">Inicio</a>
-            <a href="alumnos.html">Alumnos</a>
-            <a href="docentes.html" class="activo">Docentes</a>
-        </nav>
-       
-     
-</body>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="EG Industries">
+        <meta name="creator" content="EG Industries">
+        <meta name="publisher" content="EG Industries">
+        <meta name="copyright" content="© 2026 EG Industries. Todos los derechos reservados.">
+        <link rel="stylesheet" href="CSS/estilos.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <script src="JS/ui.js" defer></script>
+        <script src="JS/docentes.js" defer></script>
+        <title>SGA - Docentes</title>
+    </head>
+    <body>
+        <header>
+            <nav aria-label="Navegación principal">
+                <a href="index.html">Inicio</a>
+                <a href="alumnos.html">Alumnos</a>
+                <a href="docentes.html" class="activo">Docentes</a>
+            </nav>
+        </header>
+        <main>
+            <h1>Gestión de Docentes</h1>
+
+            <!-- FORMULARIO DE DOCENTES: Permite registrar nuevos docentes o editar uno existente en MongoDB -->
+            <section class="formulario-container">
+                <h2>Alta de Docente</h2>
+                <form id="formDocente">
+                    <div class="campo">
+                        <label for="dni">DNI</label>
+                        <input type="number" id="dni" placeholder="Ej: 30111222">
+                    </div>
+                    <div class="campo">
+                        <label for="nombreDocente">Nombre</label>
+                        <input type="text" id="nombreDocente" placeholder="Nombre y apellido">
+                    </div>
+                    <div class="campo">
+                        <label for="especialidad">Especialidad</label>
+                        <input type="text" id="especialidad" placeholder="Ej: Programación IV">
+                    </div>
+                    <div class="campo">
+                        <label for="correo">Correo electrónico</label>
+                        <input type="email" id="correo" placeholder="docente@sga.edu.ar">
+                    </div>
+                    <div class="acciones-form">
+                        <button type="submit" id="btnGuardarDocente">Guardar Docente</button>
+                        <button type="button" id="btnCancelarDocente" class="btn-cancelar">Cancelar</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- TABLA DE DOCENTES: Renderiza dinámicamente los docentes almacenados en MongoDB -->
+            <section class="lista-container">
+                <h2>Docentes registrados</h2>
+                <div class="tabla-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DNI</th>
+                                <th>Nombre</th>
+                                <th>Especialidad</th>
+                                <th>Correo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaDocentes"></tbody>
+                    </table>
+                </div>
+            </section>
+            <div id="mensaje" class="mensaje" role="status" aria-live="polite"></div>
+        </main>
+    </body>
 </html>
