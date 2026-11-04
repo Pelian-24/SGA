@@ -6,27 +6,13 @@ require("dotenv").config({ path: path.join(__dirname, ".env") })
 const Usuario = require("./models/Usuario")
 const Alumno = require("./models/Alumno")
 const Docente = require("./models/Docente")
+const Materia = require("./models/Materia")
 
-/**
- * Inicializa la base de datos MongoDB ("basededatos") creando el usuario administrador de prueba
- * y poblando datos iniciales en las colecciones "alumnos" y "docentes" si se encuentran vacías.
- */
 async function crearUsuario() {
     try {
         const uri = process.env.MONGO_URI || "mongodb://localhost:27017/basededatos"
         await mongoose.connect(uri)
 
-        // 1. Limpieza de colección huérfana "maestros" si está vacía (Mongoose utiliza "docentes")
-        const colecciones = await mongoose.connection.db.listCollections({ name: "maestros" }).toArray()
-        if (colecciones.length > 0) {
-            const cantidadMaestros = await mongoose.connection.db.collection("maestros").countDocuments()
-            if (cantidadMaestros === 0) {
-                await mongoose.connection.db.dropCollection("maestros")
-                console.info("Colección vacía 'maestros' reemplazada por el estándar 'docentes'.")
-            }
-        }
-
-        // 2. Creación o actualización idempotente del usuario administrador de prueba
         const email = "admin@sga.com"
         const password = "ClaveDePrueba123!"
         const hash = await bcrypt.hash(password, 10)
@@ -42,9 +28,6 @@ async function crearUsuario() {
             { upsert: true, returnDocument: "after" }
         )
 
-        console.info("Usuario de prueba listo en colección 'usuarios':", email)
-
-        // 3. Carga de alumnos iniciales de ejemplo si la colección está vacía
         const totalAlumnos = await Alumno.countDocuments()
         if (totalAlumnos === 0) {
             await Alumno.insertMany([
@@ -67,10 +50,8 @@ async function crearUsuario() {
                     correo: "ramon.diaz@sga.edu.ar"
                 }
             ])
-            console.info("Colección 'alumnos' inicializada con 3 registros de ejemplo.")
         }
 
-        // 4. Carga de docentes iniciales de ejemplo si la colección está vacía
         const totalDocentes = await Docente.countDocuments()
         if (totalDocentes === 0) {
             await Docente.insertMany([
@@ -87,10 +68,45 @@ async function crearUsuario() {
                     correo: "rocio.fernandez@sga.edu.ar"
                 }
             ])
-            console.info("Colección 'docentes' inicializada con 2 registros de ejemplo.")
         }
+
+        const totalMaterias = await Materia.countDocuments()
+        if (totalMaterias === 0) {
+            await Materia.insertMany([
+                {
+                    codigo: "PRG1",
+                    nombre: "Programación I",
+                    descripcion: "Fundamentos de algoritmos y lógica de programación",
+                    cargaHoraria: 64,
+                    estado: "activa"
+                },
+                {
+                    codigo: "PRG3",
+                    nombre: "Programación III",
+                    descripcion: "Desarrollo web frontend y asincronía",
+                    cargaHoraria: 96,
+                    estado: "activa"
+                },
+                {
+                    codigo: "PRG4",
+                    nombre: "Programación IV",
+                    descripcion: "Desarrollo full-stack con React, Express y MongoDB",
+                    cargaHoraria: 96,
+                    estado: "activa"
+                },
+                {
+                    codigo: "BD1",
+                    nombre: "Bases de Datos I",
+                    descripcion: "Modelado de datos relacional y NoSQL",
+                    cargaHoraria: 64,
+                    estado: "activa"
+                }
+            ])
+        }
+
+        console.log("Datos iniciales verificados correctamente en MongoDB")
     } catch (error) {
-        console.error("Error al inicializar la base de datos:", error.message)
+        console.error("Error al inicializar datos:", error.message)
     } finally {
         await mongoose.disconnect()
     }

@@ -99,12 +99,12 @@ export default function Header() {
                         </Link>
                         <Link
                             component={RouterLink}
-                            to="/login"
+                            to="/materias"
                             color="text.primary"
                             underline="none"
                             sx={{ px: { xs: 1, sm: 1.5 }, py: 1, borderRadius: 2, "&:hover": { bgcolor: "action.hover" } }}
                         >
-                            Ingresar
+                            Materias
                         </Link>
                         <IconButton
                             component={RouterLink}

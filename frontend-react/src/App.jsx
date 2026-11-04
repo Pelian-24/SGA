@@ -1,19 +1,11 @@
-/**
- * @copyright 2026 EG Industries. Todos los derechos reservados.
- * @license MIT — Ver archivo LICENSE en la raíz del proyecto.
- *
- * Este archivo es parte de Sistema de Gestión Académica (SGA).
- */
-
+import Alumnos from "./pages/Alumnos"
+import { FAQ } from "./pages/FAQ"
 import { Routes, Route } from "react-router-dom"
 import LayoutPpal from "./layouts/LayoutPpal"
 import Inicio from "./pages/Inicio"
-import Alumnos from "./pages/Alumnos"
 import Docentes from "./pages/Docentes"
-import { FAQ } from "./pages/FAQ"
-import Login from "./pages/Login"
+import Materias from "./pages/Materias"
 
-// ENRUTADOR PRINCIPAL: Define las rutas anidadas bajo el diseño general (LayoutPpal)
 function App() {
     return (
         <Routes>
@@ -21,8 +13,8 @@ function App() {
                 <Route index element={<Inicio />} />
                 <Route path="alumnos" element={<Alumnos />} />
                 <Route path="docentes" element={<Docentes />} />
+                <Route path="materias" element={<Materias />} />
                 <Route path="ayuda" element={<FAQ />} />
-                <Route path="login" element={<Login />} />
             </Route>
         </Routes>
     )

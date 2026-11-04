@@ -1,13 +1,9 @@
-### Estado general de la API
-GET http://localhost:3000/
-
-### Obtener todos los alumnos
 GET http://localhost:3000/alumnos
 
-### Obtener alumno por legajo
+###
 GET http://localhost:3000/alumnos/1002
 
-### Crear un nuevo alumno
+###
 POST http://localhost:3000/alumnos
 Content-Type: application/json
 
@@ -18,7 +14,7 @@ Content-Type: application/json
     "correo": "lucia@mail.com"
 }
 
-### Actualizar un alumno existente
+###
 PUT http://localhost:3000/alumnos/1002
 Content-Type: application/json
 
@@ -28,25 +24,13 @@ Content-Type: application/json
     "correo": "juan@mail.com"
 }
 
-### Eliminar un alumno por legajo
+###
 DELETE http://localhost:3000/alumnos/1025
 
-### Prueba de validación (Error 400 esperado por falta de legajo y correo)
-POST http://localhost:3000/alumnos
-Content-Type: application/json
-
-{
-    "nombre": "Rocío",
-    "carrera": "Programación"
-}
-
-### Obtener todos los docentes
+###
 GET http://localhost:3000/docentes
 
-### Obtener docente por DNI
-GET http://localhost:3000/docentes/30111222
-
-### Crear un nuevo docente
+###
 POST http://localhost:3000/docentes
 Content-Type: application/json
 
@@ -57,20 +41,7 @@ Content-Type: application/json
     "correo": "marcos@mail.com"
 }
 
-### Actualizar un docente existente
-PUT http://localhost:3000/docentes/35222311
-Content-Type: application/json
-
-{
-    "nombre": "Marcos A. López",
-    "especialidad": "Desarrollo Full Stack",
-    "correo": "marcos.lopez@mail.com"
-}
-
-### Eliminar un docente por DNI
-DELETE http://localhost:3000/docentes/35222311
-
-### Iniciar sesión (Autenticación de Usuario)
+###
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -78,3 +49,199 @@ Content-Type: application/json
     "email": "admin@sga.com",
     "password": "ClaveDePrueba123!"
 }
+
+### 1. Consultar todas las materias
+GET http://localhost:3000/materias
+
+### 2. Registrar varias materias (PRG1, PRG3, PRG4)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "PRG1",
+    "nombre": "Programación I",
+    "descripcion": "Fundamentos de algoritmos y lógica de programación",
+    "cargaHoraria": 64,
+    "estado": "activa"
+}
+
+###
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "PRG3",
+    "nombre": "Programación III",
+    "descripcion": "Desarrollo web frontend y asincronía",
+    "cargaHoraria": 96,
+    "estado": "activa"
+}
+
+###
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "PRG4",
+    "nombre": "Programación IV",
+    "descripcion": "Desarrollo full-stack con React, Express y MongoDB",
+    "cargaHoraria": 96,
+    "estado": "activa"
+}
+
+### 3. Consultar una materia por su código
+GET http://localhost:3000/materias/PRG4
+
+### 4. Consultar un código inexistente (404 esperado)
+GET http://localhost:3000/materias/MAT99
+
+### 5. Registrar una materia con todos los datos válidos (BD1)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "BD1",
+    "nombre": "Bases de Datos I",
+    "descripcion": "Modelado relacional y NoSQL",
+    "cargaHoraria": 64,
+    "estado": "activa"
+}
+
+### 6. Intentar registrar una materia sin código (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "nombre": "Matemática I",
+    "descripcion": "Álgebra y análisis",
+    "cargaHoraria": 64,
+    "estado": "activa"
+}
+
+### 7. Intentar registrar una materia sin nombre (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "MAT1",
+    "descripcion": "Álgebra y análisis",
+    "cargaHoraria": 64,
+    "estado": "activa"
+}
+
+### 8. Intentar registrar una materia sin carga horaria (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "MAT1",
+    "nombre": "Matemática I",
+    "descripcion": "Álgebra y análisis",
+    "estado": "activa"
+}
+
+### 9A. Intentar registrar una materia con carga horaria igual a cero (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "MAT1",
+    "nombre": "Matemática I",
+    "cargaHoraria": 0,
+    "estado": "activa"
+}
+
+### 9B. Intentar registrar una materia con carga horaria negativa (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "MAT1",
+    "nombre": "Matemática I",
+    "cargaHoraria": -10,
+    "estado": "activa"
+}
+
+### 9C. Intentar registrar una materia con carga horaria decimal (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "MAT1",
+    "nombre": "Matemática I",
+    "cargaHoraria": 45.5,
+    "estado": "activa"
+}
+
+### 10. Intentar registrar una materia con código duplicado (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "PRG4",
+    "nombre": "Otra Materia con Código Repetido",
+    "cargaHoraria": 60,
+    "estado": "activa"
+}
+
+### 11. Intentar registrar una materia con un estado no permitido (400 esperado)
+POST http://localhost:3000/materias
+Content-Type: application/json
+
+{
+    "codigo": "ING1",
+    "nombre": "Inglés Técnico I",
+    "cargaHoraria": 48,
+    "estado": "pendiente"
+}
+
+### 12. Modificar el nombre y la descripción de una materia existente
+PUT http://localhost:3000/materias/PRG1
+Content-Type: application/json
+
+{
+    "nombre": "Programación Inicial I",
+    "descripcion": "Introducción a algoritmos, estructuras de control y funciones"
+}
+
+### 13. Modificar su carga horaria y su estado
+PUT http://localhost:3000/materias/PRG1
+Content-Type: application/json
+
+{
+    "cargaHoraria": 80,
+    "estado": "inactiva"
+}
+
+### 14. Intentar modificar una materia inexistente (404 esperado)
+PUT http://localhost:3000/materias/NOEXISTE
+Content-Type: application/json
+
+{
+    "nombre": "Materia Inexistente",
+    "cargaHoraria": 64,
+    "estado": "activa"
+}
+
+### 15. Intentar cambiar el código por el de otra materia ya registrada (400 esperado)
+PUT http://localhost:3000/materias/PRG1
+Content-Type: application/json
+
+{
+    "codigo": "PRG4",
+    "nombre": "Programación Inicial I",
+    "cargaHoraria": 80,
+    "estado": "inactiva"
+}
+
+### 16. Eliminar una materia existente
+DELETE http://localhost:3000/materias/BD1
+
+### 16B. Intentar consultar nuevamente la materia eliminada (404 esperado)
+GET http://localhost:3000/materias/BD1
+
+### 17. Intentar eliminar una materia inexistente (404 esperado)
+DELETE http://localhost:3000/materias/NOEXISTE
+
+### 18. Comprobar que el listado general refleje los cambios realizados
+GET http://localhost:3000/materias
