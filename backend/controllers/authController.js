@@ -1,12 +1,7 @@
 const Usuario = require("../models/Usuario")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
-/**
- * Autentica a un usuario verificando su correo electrónico y comparando el hash de su contraseña con bcrypt.
- *
- * @param {import("express").Request} req Objeto de petición HTTP con email y password.
- * @param {import("express").Response} res Objeto de respuesta HTTP.
- */
 const login = async (req, res) => {
     try {
         const { email, password } = req.body
@@ -35,17 +30,24 @@ const login = async (req, res) => {
             })
         }
 
-        const datosUsuario = {
+        const token = jwt.sign(
+            {
+                id: usuario._id,
+                rol: usuario.rol
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN || "2h"
+            }
+        )
+
+        return res.status(200).json({
+            mensaje: "Login correcto",
+            token,
             id: usuario._id,
             nombre: usuario.nombre,
             email: usuario.email,
             rol: usuario.rol
-        }
-
-        return res.status(200).json({
-            mensaje: "Login correcto",
-            ...datosUsuario,
-            usuario: datosUsuario
         })
     } catch (error) {
         console.error("Error en login:", error)

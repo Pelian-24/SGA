@@ -1,4 +1,5 @@
 const express = require("express")
+const { verificarToken } = require("../middlewares/authMiddleware")
 const {
     obtenerAlumnos,
     obtenerAlumno,
@@ -9,11 +10,10 @@ const {
 
 const router = express.Router()
 
-// RUTAS CRUD DE ALUMNOS: Prefijo base "/alumnos"
-router.get("/", obtenerAlumnos)
-router.get("/:id", obtenerAlumno)
-router.post("/", crearAlumno)
-router.put("/:id", actualizarAlumno)
-router.delete("/:id", eliminarAlumno)
+router.get("/", verificarToken, obtenerAlumnos)
+router.get("/:id", verificarToken, obtenerAlumno)
+router.post("/", verificarToken, crearAlumno)
+router.put("/:id", verificarToken, actualizarAlumno)
+router.delete("/:id", verificarToken, eliminarAlumno)
 
 module.exports = router

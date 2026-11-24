@@ -41,7 +41,8 @@ Content-Type: application/json
     "correo": "marcos@mail.com"
 }
 
-###
+### Login (obtiene el token JWT)
+# @name login
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -49,6 +50,40 @@ Content-Type: application/json
     "email": "admin@sga.com",
     "password": "ClaveDePrueba123!"
 }
+
+###
+@token = {{login.response.body.token}}
+
+### Login con contraseña incorrecta (esperado: 401)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@sga.com",
+    "password": "PasswordIncorrecta"
+}
+
+### GET Alumnos sin token (esperado: 401 Acceso no autorizado)
+GET http://localhost:3000/alumnos
+
+### GET Alumnos con token válido (esperado: 200)
+GET http://localhost:3000/alumnos
+Authorization: Bearer {{token}}
+
+### GET Alumnos con token modificado (esperado: 401 Token inválido o expirado)
+GET http://localhost:3000/alumnos
+Authorization: Bearer token_invalido_o_modificado
+
+### GET Docentes sin token (esperado: 401)
+GET http://localhost:3000/docentes
+
+### GET Docentes con token válido (esperado: 200)
+GET http://localhost:3000/docentes
+Authorization: Bearer {{token}}
+
+### GET Materias con token válido (esperado: 200)
+GET http://localhost:3000/materias
+Authorization: Bearer {{token}}
 
 ### 1. Consultar todas las materias
 GET http://localhost:3000/materias

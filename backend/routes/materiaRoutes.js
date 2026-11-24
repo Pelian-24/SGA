@@ -1,4 +1,5 @@
 const express = require("express")
+const { verificarToken } = require("../middlewares/authMiddleware")
 const {
     obtenerMaterias,
     obtenerMateria,
@@ -9,10 +10,10 @@ const {
 
 const router = express.Router()
 
-router.get("/", obtenerMaterias)
-router.get("/:codigo", obtenerMateria)
-router.post("/", crearMateria)
-router.put("/:codigo", actualizarMateria)
-router.delete("/:codigo", eliminarMateria)
+router.get("/", verificarToken, obtenerMaterias)
+router.get("/:codigo", verificarToken, obtenerMateria)
+router.post("/", verificarToken, crearMateria)
+router.put("/:codigo", verificarToken, actualizarMateria)
+router.delete("/:codigo", verificarToken, eliminarMateria)
 
 module.exports = router
