@@ -1,10 +1,14 @@
-import { Alert, Box, Button, Chip, Paper, Stack, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+import { Alert, Box, Button, TextField, Typography } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../context/useAuth"
 
-const API_LOGIN = "http://localhost:3000/auth/login"
-
-// PÁGINA DE INICIO DE SESIÓN: Autentica al usuario contra la colección "usuarios" de MongoDB
 export default function Login() {
+    const navigate = useNavigate()
+    const { setToken } = useAuth()
+    const theme = useTheme()
+
     const [usuario, setUsuario] = useState(null)
     const [error, setError] = useState("")
     const [cargando, setCargando] = useState(false)
@@ -21,7 +25,7 @@ export default function Login() {
         setMensaje("")
 
         try {
-            const respuesta = await fetch(API_LOGIN, {
+            const respuesta = await fetch("http://localhost:3000/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -31,17 +35,16 @@ export default function Login() {
                 throw new Error(datos.mensaje || "No se pudo iniciar sesión")
             }
 
-            setUsuario(
-                datos.usuario || {
-                    id: datos.id,
-                    nombre: datos.nombre,
-                    email: datos.email,
-                    rol: datos.rol
-                }
-            )
-            setMensaje(datos.mensaje || "Sesión iniciada correctamente")
+            localStorage.setItem("token", datos.token)
+            setToken(datos.token)
+
+            setUsuario(datos)
+            setMensaje(datos.mensaje)
+
             setEmail("")
             setPassword("")
+
+            navigate("/")
         } catch (err) {
             console.error("Error en login:", err)
             setError(err.message || "No se pudo conectar con el servidor.")
@@ -51,82 +54,107 @@ export default function Login() {
     }
 
     return (
-        <Paper
-            component="section"
-            elevation={0}
+        <Box
+            component="main"
             sx={{
-                maxWidth: 480,
-                mx: "auto",
-                p: { xs: 3, sm: 4 },
-                border: 1,
-                borderColor: "divider",
-                borderRadius: 4,
-                bgcolor: "background.paper"
+                minHeight: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                px: 2,
+                backgroundColor: theme.palette.background.default
             }}
         >
-            <Typography component="h1" variant="h5" sx={{ mb: 1, fontWeight: 700 }}>
-                Iniciar Sesión
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Ingresá tus credenciales para acceder al Sistema de Gestión Académica.
-            </Typography>
-
             <Box
                 component="form"
                 onSubmit={login}
-                sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
+                sx={{
+                    width: "100%",
+                    maxWidth: 420,
+                    p: 4,
+                    borderRadius: 3,
+                    backgroundColor: theme.palette.background.paper,
+                    border: `1px solid ${theme.palette.divider}`,
+                    boxShadow: `0 12px 32px ${theme.palette.divider}`
+                }}
             >
+                <Typography
+                    variant="h4"
+                    component="h1"
+                    sx={{
+                        mb: 3,
+                        textAlign: "center",
+                        color: theme.palette.text.primary,
+                        fontWeight: 700
+                    }}
+                >
+                    Iniciar sesión
+                </Typography>
                 <TextField
-                    id="email"
-                    name="email"
                     label="Correo electrónico"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="username"
                     required
                     fullWidth
+                    margin="normal"
+                    sx={{
+                        "& .MuiOutlinedInput-root": { borderRadius: 2 }
+                    }}
                 />
                 <TextField
-                    id="password"
-                    name="password"
-                    label="Contraseña"
                     type="password"
+                    label="Contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
                     required
                     fullWidth
+                    margin="normal"
+                    sx={{
+                        "& .MuiOutlinedInput-root": { borderRadius: 2 }
+                    }}
                 />
-                <Button type="submit" variant="contained" size="large" disabled={cargando}>
-                    {cargando ? "Verificando..." : "Ingresar"}
-                </Button>
-
                 {error && (
-                    <Alert severity="error" role="alert">
+                    <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
                         {error}
                     </Alert>
                 )}
-
                 {mensaje && (
-                    <Alert severity="success" role="status">
+                    <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>
                         {mensaje}
                     </Alert>
                 )}
-
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    disabled={cargando}
+                    sx={{
+                        mt: 3,
+                        py: 1.5,
+                        borderRadius: 2,
+                        fontWeight: 700
+                    }}
+                >
+                    {cargando ? "Ingresando..." : "Ingresar"}
+                </Button>
                 {usuario && (
-                    <Paper
-                        variant="outlined"
-                        sx={{ p: 2, borderRadius: 3, bgcolor: "background.default" }}
-                    >
-                        <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.5 }}>
-                            <Typography fontWeight={700}>{usuario.nombre}</Typography>
-                            <Chip label={usuario.rol} size="small" color="primary" />
-                        </Stack>
-                        <Typography variant="body2" color="text.secondary">
-                            {usuario.email}
+                    <Box sx={{ mt: 3 }}>
+                        <Typography variant="subtitle1">
+                            Bienvenido/a, {usuario.nombre}
                         </Typography>
-                    </Paper>
+                        <Typography variant="body2">
+                            Correo: {usuario.email}
+                        </Typography>
+                        <Typography variant="body2">
+                            Rol: {usuario.rol}
+                        </Typography>
+                    </Box>
                 )}
             </Box>
-        </Paper>
+        </Box>
     )
 }

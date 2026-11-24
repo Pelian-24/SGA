@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem"
 import Paper from "@mui/material/Paper"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
+import { useAuth } from "../context/useAuth"
 
 const API_MATERIAS = "http://localhost:3000/materias"
 
@@ -25,6 +26,7 @@ function FormularioMateria({
     })
     const [error, setError] = useState("")
     const [guardando, setGuardando] = useState(false)
+    const { token } = useAuth()
 
     function manejarCambio(e) {
         const { name, value } = e.target
@@ -96,7 +98,10 @@ function FormularioMateria({
         try {
             const respuesta = await fetch(url, {
                 method: editando ? "PUT" : "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(materia)
             })
 

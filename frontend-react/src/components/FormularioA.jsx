@@ -5,10 +5,10 @@ import Button from "@mui/material/Button"
 import Paper from "@mui/material/Paper"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
+import { useAuth } from "../context/useAuth"
 
 const API_ALUMNOS = "http://localhost:3000/alumnos"
 
-// FORMULARIO DE ALUMNOS: Permite crear (POST) o editar (PUT) un alumno en MongoDB
 function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }) {
     const [formulario, setFormulario] = useState({
         legajo: String(alumnoEditar?.legajo ?? ""),
@@ -18,6 +18,7 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }) {
     })
     const [error, setError] = useState("")
     const [guardando, setGuardando] = useState(false)
+    const { token } = useAuth()
 
     function manejarCambio(e) {
         const { name, value } = e.target
@@ -44,7 +45,10 @@ function FormularioA({ onAlumnoCreado, alumnoEditar, onCancelar }) {
         try {
             const respuesta = await fetch(url, {
                 method: editando ? "PUT" : "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(alumno)
             })
 

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { Alert, Box, Button, Chip, Paper, Stack, Typography } from "@mui/material"
+import { useAuth } from "../context/useAuth"
 
 const API_DOCENTES = "http://localhost:3000/docentes"
 
-// LISTA DE DOCENTES: Consulta y renderiza los docentes almacenados en la colección "docentes" de MongoDB
 export function ListaDocentes({ actualizar, onDocenteCreado, onEditarDocente }) {
     const [docentes, setDocentes] = useState([])
     const [cargando, setCargando] = useState(true)
     const [error, setError] = useState("")
+    const { token } = useAuth()
 
     async function eliminarDocente(dni) {
         const confirmar = window.confirm("¿Seguro que querés eliminar este docente?")
@@ -16,7 +17,10 @@ export function ListaDocentes({ actualizar, onDocenteCreado, onEditarDocente }) 
         }
         try {
             const respuesta = await fetch(`${API_DOCENTES}/${dni}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             })
             if (!respuesta.ok) {
                 throw new Error(`No se pudo eliminar. Estado HTTP: ${respuesta.status}`)
@@ -34,7 +38,11 @@ export function ListaDocentes({ actualizar, onDocenteCreado, onEditarDocente }) 
             setError("")
 
             try {
-                const respuesta = await fetch(API_DOCENTES)
+                const respuesta = await fetch(API_DOCENTES, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 if (!respuesta.ok) {
                     throw new Error(`No se pudo obtener la lista (HTTP ${respuesta.status})`)
                 }
@@ -48,7 +56,7 @@ export function ListaDocentes({ actualizar, onDocenteCreado, onEditarDocente }) 
             }
         }
         cargarDocentes()
-    }, [actualizar])
+    }, [actualizar, token])
 
     if (cargando) {
         return (
