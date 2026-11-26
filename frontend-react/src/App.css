@@ -1,3 +1,6 @@
+/* Estilos generados por la plantilla inicial de Vite + React (conservados como referencia) */
+
+/* Botón contador de ejemplo de la plantilla base */
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -17,6 +20,7 @@
   }
 }
 
+/* Composición visual del logotipo en la portada de plantilla Vite */
 .hero {
   position: relative;
 
@@ -56,6 +60,7 @@
   }
 }
 
+/* Sección central apilada verticalmente */
 #center {
   display: flex;
   flex-direction: column;
@@ -70,6 +75,7 @@
   }
 }
 
+/* Sección inferior de enlaces y documentación de plantilla */
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);
@@ -95,6 +101,7 @@
   }
 }
 
+/* Borde divisorio entre columnas de la sección de documentación */
 #docs {
   border-right: 1px solid var(--border);
 
@@ -104,6 +111,7 @@
   }
 }
 
+/* Lista horizontal de enlaces sociales y recursos */
 #next-steps ul {
   list-style: none;
   padding: 0;
@@ -153,6 +161,7 @@
   }
 }
 
+/* Espaciador superior de la plantilla base */
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
@@ -161,6 +170,7 @@
   }
 }
 
+/* Marcas decorativas en los extremos de la línea divisoria */
 .ticks {
   position: relative;
   width: 100%;

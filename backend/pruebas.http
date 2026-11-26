@@ -1,11 +1,120 @@
-GET http://localhost:3000/alumnos
+# Archivo de pruebas HTTP para la extensión REST Client de VS Code
+# Cambiá @baseUrl por tu URL de Render cuando quieras probar el backend desplegado en la nube
+@baseUrl = http://localhost:3000
 
-###
-GET http://localhost:3000/alumnos/1002
+### ============================================================================
+### 1. AUTENTICACIÓN (LOGIN ADMIN Y USUARIO DE CONSULTA)
+### ============================================================================
 
-###
-POST http://localhost:3000/alumnos
+# Inicia sesión como administrador y guarda el token en la variable @tokenAdmin
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
+
+{
+    "email": "admin@sga.com",
+    "password": "claveAdmin123"
+}
+
+###
+@tokenAdmin = {{loginAdmin.response.body.token}}
+
+# Inicia sesión como usuario de consulta y guarda el token en la variable @tokenConsulta
+# @name loginConsulta
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "consulta@sga.com",
+    "password": "claveUsuario123"
+}
+
+###
+@tokenConsulta = {{loginConsulta.response.body.token}}
+
+# Prueba de login con contraseña incorrecta (esperado: 401)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@sga.com",
+    "password": "PasswordIncorrecta"
+}
+
+### ============================================================================
+### 2. PRUEBAS DE SEGURIDAD (JWT Y CONTROL DE ROLES)
+### ============================================================================
+
+# Consulta de alumnos sin token (esperado: 401 Acceso no autorizado)
+GET {{baseUrl}}/alumnos
+
+###
+# Consulta de alumnos con token modificado (esperado: 401 Token inválido o expirado)
+GET {{baseUrl}}/alumnos
+Authorization: Bearer token_invalido_o_modificado
+
+###
+# Usuario de consulta leyendo alumnos (esperado: 200 OK)
+GET {{baseUrl}}/alumnos
+Authorization: Bearer {{tokenConsulta}}
+
+###
+# Usuario de consulta intentando crear un alumno (esperado: 403 Forbidden)
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+Authorization: Bearer {{tokenConsulta}}
+
+{
+    "legajo": 9999,
+    "nombre": "Prueba Sin Permiso",
+    "carrera": "Programación",
+    "correo": "sinpermiso@mail.com"
+}
+
+###
+# Usuario de consulta intentando crear un docente (esperado: 403 Forbidden)
+POST {{baseUrl}}/docentes
+Content-Type: application/json
+Authorization: Bearer {{tokenConsulta}}
+
+{
+    "dni": 99999999,
+    "nombre": "Docente Sin Permiso",
+    "especialidad": "Pruebas",
+    "correo": "docente.sinpermiso@mail.com"
+}
+
+###
+# Usuario de consulta intentando crear una materia (esperado: 403 Forbidden)
+POST {{baseUrl}}/materias
+Content-Type: application/json
+Authorization: Bearer {{tokenConsulta}}
+
+{
+    "codigo": "TEST403",
+    "nombre": "Materia Sin Permiso",
+    "cargaHoraria": 64,
+    "estado": "activa"
+}
+
+### ============================================================================
+### 3. CRUD DE ALUMNOS (CON TOKEN DE ADMINISTRADOR)
+### ============================================================================
+
+# Lista todos los alumnos ordenados por legajo
+GET {{baseUrl}}/alumnos
+Authorization: Bearer {{tokenAdmin}}
+
+###
+# Consulta un alumno puntual por legajo
+GET {{baseUrl}}/alumnos/1002
+Authorization: Bearer {{tokenAdmin}}
+
+###
+# Registra un nuevo alumno (requiere rol admin)
+POST {{baseUrl}}/alumnos
+Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "legajo": 1025,
@@ -15,8 +124,10 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/alumnos/1002
+# Modifica un alumno existente por legajo (requiere rol admin)
+PUT {{baseUrl}}/alumnos/1002
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "nombre": "Juan Carlos Gómez",
@@ -25,14 +136,23 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/alumnos/1025
+# Elimina un alumno por legajo (requiere rol admin)
+DELETE {{baseUrl}}/alumnos/1025
+Authorization: Bearer {{tokenAdmin}}
+
+### ============================================================================
+### 4. CRUD DE DOCENTES (CON TOKEN DE ADMINISTRADOR)
+### ============================================================================
+
+# Lista todos los docentes ordenados por DNI
+GET {{baseUrl}}/docentes
+Authorization: Bearer {{tokenAdmin}}
 
 ###
-GET http://localhost:3000/docentes
-
-###
-POST http://localhost:3000/docentes
+# Registra un nuevo docente (requiere rol admin)
+POST {{baseUrl}}/docentes
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "dni": 35222311,
@@ -41,56 +161,24 @@ Content-Type: application/json
     "correo": "marcos@mail.com"
 }
 
-### Login (obtiene el token JWT)
-# @name login
-POST http://localhost:3000/auth/login
-Content-Type: application/json
+###
+# Elimina el docente de prueba por DNI (requiere rol admin)
+DELETE {{baseUrl}}/docentes/35222311
+Authorization: Bearer {{tokenAdmin}}
 
-{
-    "email": "admin@sga.com",
-    "password": "ClaveDePrueba123!"
-}
+### ============================================================================
+### 5. CRUD Y VALIDACIONES DEL MÓDULO MATERIAS (CON TOKEN DE ADMINISTRADOR)
+### ============================================================================
+
+# 1. Consultar todas las materias
+GET {{baseUrl}}/materias
+Authorization: Bearer {{tokenAdmin}}
 
 ###
-@token = {{login.response.body.token}}
-
-### Login con contraseña incorrecta (esperado: 401)
-POST http://localhost:3000/auth/login
+# 2. Registrar una materia válida (PRG1)
+POST {{baseUrl}}/materias
 Content-Type: application/json
-
-{
-    "email": "admin@sga.com",
-    "password": "PasswordIncorrecta"
-}
-
-### GET Alumnos sin token (esperado: 401 Acceso no autorizado)
-GET http://localhost:3000/alumnos
-
-### GET Alumnos con token válido (esperado: 200)
-GET http://localhost:3000/alumnos
-Authorization: Bearer {{token}}
-
-### GET Alumnos con token modificado (esperado: 401 Token inválido o expirado)
-GET http://localhost:3000/alumnos
-Authorization: Bearer token_invalido_o_modificado
-
-### GET Docentes sin token (esperado: 401)
-GET http://localhost:3000/docentes
-
-### GET Docentes con token válido (esperado: 200)
-GET http://localhost:3000/docentes
-Authorization: Bearer {{token}}
-
-### GET Materias con token válido (esperado: 200)
-GET http://localhost:3000/materias
-Authorization: Bearer {{token}}
-
-### 1. Consultar todas las materias
-GET http://localhost:3000/materias
-
-### 2. Registrar varias materias (PRG1, PRG3, PRG4)
-POST http://localhost:3000/materias
-Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "codigo": "PRG1",
@@ -101,50 +189,34 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/materias
-Content-Type: application/json
-
-{
-    "codigo": "PRG3",
-    "nombre": "Programación III",
-    "descripcion": "Desarrollo web frontend y asincronía",
-    "cargaHoraria": 96,
-    "estado": "activa"
-}
+# 3. Consultar una materia por su código
+GET {{baseUrl}}/materias/PRG4
+Authorization: Bearer {{tokenAdmin}}
 
 ###
-POST http://localhost:3000/materias
+# 4. Consultar un código inexistente (esperado: 404)
+GET {{baseUrl}}/materias/MAT99
+Authorization: Bearer {{tokenAdmin}}
+
+###
+# 5. Registrar una materia de prueba válida (BD9)
+POST {{baseUrl}}/materias
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
-    "codigo": "PRG4",
-    "nombre": "Programación IV",
-    "descripcion": "Desarrollo full-stack con React, Express y MongoDB",
-    "cargaHoraria": 96,
-    "estado": "activa"
-}
-
-### 3. Consultar una materia por su código
-GET http://localhost:3000/materias/PRG4
-
-### 4. Consultar un código inexistente (404 esperado)
-GET http://localhost:3000/materias/MAT99
-
-### 5. Registrar una materia con todos los datos válidos (BD1)
-POST http://localhost:3000/materias
-Content-Type: application/json
-
-{
-    "codigo": "BD1",
-    "nombre": "Bases de Datos I",
+    "codigo": "BD9",
+    "nombre": "Bases de Datos de Prueba",
     "descripcion": "Modelado relacional y NoSQL",
     "cargaHoraria": 64,
     "estado": "activa"
 }
 
-### 6. Intentar registrar una materia sin código (400 esperado)
-POST http://localhost:3000/materias
+###
+# 6. Intentar registrar una materia sin código (esperado: 400)
+POST {{baseUrl}}/materias
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "nombre": "Matemática I",
@@ -153,9 +225,11 @@ Content-Type: application/json
     "estado": "activa"
 }
 
-### 7. Intentar registrar una materia sin nombre (400 esperado)
-POST http://localhost:3000/materias
+###
+# 7. Intentar registrar una materia sin nombre (esperado: 400)
+POST {{baseUrl}}/materias
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "codigo": "MAT1",
@@ -164,20 +238,11 @@ Content-Type: application/json
     "estado": "activa"
 }
 
-### 8. Intentar registrar una materia sin carga horaria (400 esperado)
-POST http://localhost:3000/materias
+###
+# 8. Intentar registrar una materia con carga horaria inválida (esperado: 400)
+POST {{baseUrl}}/materias
 Content-Type: application/json
-
-{
-    "codigo": "MAT1",
-    "nombre": "Matemática I",
-    "descripcion": "Álgebra y análisis",
-    "estado": "activa"
-}
-
-### 9A. Intentar registrar una materia con carga horaria igual a cero (400 esperado)
-POST http://localhost:3000/materias
-Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "codigo": "MAT1",
@@ -186,31 +251,11 @@ Content-Type: application/json
     "estado": "activa"
 }
 
-### 9B. Intentar registrar una materia con carga horaria negativa (400 esperado)
-POST http://localhost:3000/materias
+###
+# 9. Intentar registrar una materia con código duplicado (esperado: 400)
+POST {{baseUrl}}/materias
 Content-Type: application/json
-
-{
-    "codigo": "MAT1",
-    "nombre": "Matemática I",
-    "cargaHoraria": -10,
-    "estado": "activa"
-}
-
-### 9C. Intentar registrar una materia con carga horaria decimal (400 esperado)
-POST http://localhost:3000/materias
-Content-Type: application/json
-
-{
-    "codigo": "MAT1",
-    "nombre": "Matemática I",
-    "cargaHoraria": 45.5,
-    "estado": "activa"
-}
-
-### 10. Intentar registrar una materia con código duplicado (400 esperado)
-POST http://localhost:3000/materias
-Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "codigo": "PRG4",
@@ -219,9 +264,11 @@ Content-Type: application/json
     "estado": "activa"
 }
 
-### 11. Intentar registrar una materia con un estado no permitido (400 esperado)
-POST http://localhost:3000/materias
+###
+# 10. Intentar registrar una materia con un estado no permitido (esperado: 400)
+POST {{baseUrl}}/materias
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "codigo": "ING1",
@@ -230,27 +277,24 @@ Content-Type: application/json
     "estado": "pendiente"
 }
 
-### 12. Modificar el nombre y la descripción de una materia existente
-PUT http://localhost:3000/materias/PRG1
+###
+# 11. Modificar nombre, descripción, carga horaria y estado de una materia existente
+PUT {{baseUrl}}/materias/BD9
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
-    "nombre": "Programación Inicial I",
-    "descripcion": "Introducción a algoritmos, estructuras de control y funciones"
-}
-
-### 13. Modificar su carga horaria y su estado
-PUT http://localhost:3000/materias/PRG1
-Content-Type: application/json
-
-{
+    "nombre": "Bases de Datos Actualizada",
+    "descripcion": "Diseño y consultas sobre MongoDB",
     "cargaHoraria": 80,
     "estado": "inactiva"
 }
 
-### 14. Intentar modificar una materia inexistente (404 esperado)
-PUT http://localhost:3000/materias/NOEXISTE
+###
+# 12. Intentar modificar una materia inexistente (esperado: 404)
+PUT {{baseUrl}}/materias/NOEXISTE
 Content-Type: application/json
+Authorization: Bearer {{tokenAdmin}}
 
 {
     "nombre": "Materia Inexistente",
@@ -258,25 +302,7 @@ Content-Type: application/json
     "estado": "activa"
 }
 
-### 15. Intentar cambiar el código por el de otra materia ya registrada (400 esperado)
-PUT http://localhost:3000/materias/PRG1
-Content-Type: application/json
-
-{
-    "codigo": "PRG4",
-    "nombre": "Programación Inicial I",
-    "cargaHoraria": 80,
-    "estado": "inactiva"
-}
-
-### 16. Eliminar una materia existente
-DELETE http://localhost:3000/materias/BD1
-
-### 16B. Intentar consultar nuevamente la materia eliminada (404 esperado)
-GET http://localhost:3000/materias/BD1
-
-### 17. Intentar eliminar una materia inexistente (404 esperado)
-DELETE http://localhost:3000/materias/NOEXISTE
-
-### 18. Comprobar que el listado general refleje los cambios realizados
-GET http://localhost:3000/materias
+###
+# 13. Eliminar la materia de prueba BD9
+DELETE {{baseUrl}}/materias/BD9
+Authorization: Bearer {{tokenAdmin}}

@@ -1,7 +1,10 @@
+// Importa createTheme de Material UI para definir los esquemas de color de la app
 import { createTheme } from "@mui/material/styles"
 
+// Configura la paleta visual personalizada del SGA para modo claro y modo oscuro
 const tema = createTheme({
     colorSchemes: {
+        // Esquema de colores para el modo claro
         light: {
             palette: {
                 primary: {
@@ -23,6 +26,7 @@ const tema = createTheme({
                 divider: "#DDD8CF"
             }
         },
+        // Esquema de colores para el modo oscuro
         dark: {
             palette: {
                 primary: {
@@ -47,4 +51,5 @@ const tema = createTheme({
     }
 })
 
+// Exporta el tema para aplicarlo en ThemeProvider desde main.jsx
 export default tema

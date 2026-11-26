@@ -1,27 +1,27 @@
-# Dependencias Node.js
+# Dependencias de Node.js (se reinstalan con npm install)
 node_modules/
 /package-lock.json
 
-# Variables de entorno y secretos
+# Variables de entorno y archivos con credenciales privadas
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 *.pem
 *.key
 
-# Compilados y builds
+# Archivos generados al compilar el frontend para producción
 dist/
 dist-ssr/
 build/
 out/
 
-# Logs y archivos temporales del sistema
+# Registros de errores (logs) y archivos temporales del sistema operativo
 *.log
 npm-debug.log*
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Configuraciones locales del IDE
+# Configuraciones locales de editores / IDE
 .vscode/
 .idea/

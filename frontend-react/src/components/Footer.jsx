@@ -1,9 +1,12 @@
+// Importa componentes de Material UI para estructurar el pie de página
 import Box from "@mui/material/Box"
 import Container from "@mui/material/Container"
 import Typography from "@mui/material/Typography"
 
-export default function Footer(){
+// Pie de página global mostrado al final de todas las pantallas internas del SGA
+export default function Footer() {
     return (
+        // Contenedor semántico footer con borde superior divisorio
         <Box
             component="footer"
             sx={{
@@ -13,6 +16,7 @@ export default function Footer(){
                 bgcolor: "background.paper"
             }}
         >
+            {/* Contenedor centrado que alinea el nombre del sistema y la asignatura */}
             <Container
                 maxWidth="lg"
                 sx={{

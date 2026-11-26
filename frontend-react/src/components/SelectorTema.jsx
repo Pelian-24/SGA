@@ -1,34 +1,49 @@
+// Importa Box para centrar el interruptor dentro del encabezado
 import Box from "@mui/material/Box"
-import { useColorScheme } from "@mui/material/styles" // Hook para obtener y cambiar el modo de color (claro/oscuro)
+// Importa el hook de Material UI que permite leer y cambiar entre modo claro y oscuro
+import { useColorScheme } from "@mui/material/styles"
+// Importa el switch personalizado con íconos de sol y luna
 import MaterialUISwitch from "./MaterialUISwitch"
 
+// Componente que controla el cambio de tema claro/oscuro de toda la aplicación
 function SelectorTema() {
-    const {mode, setMode} = useColorScheme() // Hook que proporciona el modo de color actual y una función para cambiarlo
+    // Obtiene el esquema de color activo y la función para actualizarlo
+    const { mode, setMode } = useColorScheme()
 
+    // Evita renderizar hasta que Material UI determine el modo inicial
     if (!mode) {
-        return null  // Si no se puede obtener el modo actual, no renderizar nada
+        return null
     }
-    const modoOscuro = mode === "dark" // true si el modo actual es oscuro, false si es claro
 
+    // Determina si el switch debe mostrarse activado (modo oscuro)
+    const modoOscuro = mode === "dark"
+
+    // Alterna el esquema de color según el estado marcado del switch
     function cambiarModo(event) {
-        setMode(event.target.checked ? "dark" : "light") // Cambia el modo de color según el estado del switch
+        setMode(event.target.checked ? "dark" : "light")
     }
+
     return (
+        // Contenedor flexible que alinea el interruptor en la barra de navegación
         <Box sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             flexShrink: 0
         }}>
+            {/* Switch accesible con etiqueta para lectores de pantalla */}
             <MaterialUISwitch
-            checked={modoOscuro}  // El switch está activado si el modo actual es oscuro
-            onChange={cambiarModo}
-            slotProps={{
-                input: {
-                    "aria-label": "Cambiar entre modo claro y oscuro",
-                },
-            }} />
+                checked={modoOscuro}
+                onChange={cambiarModo}
+                slotProps={{
+                    input: {
+                        "aria-label": "Cambiar entre modo claro y oscuro",
+                    },
+                }}
+            />
         </Box>
     )
 }
+
+// Exporta SelectorTema para utilizarlo en el Header
 export default SelectorTema

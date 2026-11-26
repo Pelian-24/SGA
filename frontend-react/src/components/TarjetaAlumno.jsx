@@ -1,5 +1,7 @@
-function TarjetaAlumno({ nombre, carrera, edad }){
+// Componente de práctica inicial: muestra una tarjeta con datos de un alumno recibidos por props
+function TarjetaAlumno({ nombre, carrera, edad }) {
     return (
+        // Artículo semántico que presenta nombre, carrera y edad del alumno
         <article>
             <h2>{nombre}</h2>
             <p>{carrera}</p>
@@ -7,4 +9,6 @@ function TarjetaAlumno({ nombre, carrera, edad }){
         </article>
     )
 }
+
+// Exporta el componente para practicar el paso de props en React
 export default TarjetaAlumno

@@ -1,19 +1,29 @@
+// Importa componentes de barra de navegación de Material UI
 import { AppBar, Box, Button, Container, IconButton, Link, Stack, Toolbar, Typography } from "@mui/material"
+// Importa el ícono de ayuda para enlazar a la página de Preguntas Frecuentes
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded"
+// Importa Link (renombrado a RouterLink) y useNavigate para la navegación interna sin recargas
 import { Link as RouterLink, useNavigate } from "react-router-dom"
+// Importa el interruptor que alterna entre modo claro y oscuro
 import SelectorTema from "./SelectorTema"
+// Importa useAuth para acceder a la acción cerrarSesion
 import { useAuth } from "../context/useAuth"
 
+// Encabezado global con logotipo, enlaces de navegación, cierre de sesión y selector de tema
 export default function Header() {
+    // Obtiene la función para limpiar token y usuario desde el contexto de autenticación
     const { cerrarSesion } = useAuth()
+    // Permite redirigir a la pantalla de login al cerrar sesión
     const navigate = useNavigate()
 
+    // Ejecuta el cierre de sesión y redirige al formulario de inicio de sesión
     const logout = () => {
         cerrarSesion()
         navigate("/login")
     }
 
     return (
+        // Barra superior fija al flujo del documento con fondo del tema activo
         <AppBar
             component="header"
             position="static"
@@ -36,6 +46,7 @@ export default function Header() {
                         justifyContent: "space-between"
                     }}
                 >
+                    {/* Bloque de marca (logo + nombre del sistema) que redirige al inicio */}
                     <Link
                         component={RouterLink}
                         to="/"
@@ -66,6 +77,7 @@ export default function Header() {
                         </Stack>
                     </Link>
 
+                    {/* Menú principal con enlaces a cada módulo, ayuda, logout y tema */}
                     <Stack
                         component="nav"
                         aria-label="Navegación principal"
@@ -79,6 +91,7 @@ export default function Header() {
                             order: { xs: 2, sm: 0 }
                         }}
                     >
+                        {/* Enlace a la página de inicio */}
                         <Link
                             component={RouterLink}
                             to="/"
@@ -88,6 +101,8 @@ export default function Header() {
                         >
                             Inicio
                         </Link>
+
+                        {/* Enlace al módulo Alumnos */}
                         <Link
                             component={RouterLink}
                             to="/alumnos"
@@ -97,6 +112,8 @@ export default function Header() {
                         >
                             Alumnos
                         </Link>
+
+                        {/* Enlace al módulo Docentes */}
                         <Link
                             component={RouterLink}
                             to="/docentes"
@@ -106,6 +123,8 @@ export default function Header() {
                         >
                             Docentes
                         </Link>
+
+                        {/* Enlace al módulo Materias */}
                         <Link
                             component={RouterLink}
                             to="/materias"
@@ -115,6 +134,8 @@ export default function Header() {
                         >
                             Materias
                         </Link>
+
+                        {/* Botón con ícono de pregunta que lleva a Preguntas Frecuentes */}
                         <IconButton
                             component={RouterLink}
                             to="/ayuda"
@@ -124,6 +145,8 @@ export default function Header() {
                         >
                             <HelpOutlineRoundedIcon />
                         </IconButton>
+
+                        {/* Botón para finalizar la sesión actual */}
                         <Button
                             type="button"
                             color="inherit"
@@ -133,6 +156,8 @@ export default function Header() {
                         >
                             Cerrar sesión
                         </Button>
+
+                        {/* Switch de cambio entre tema claro y tema oscuro */}
                         <SelectorTema />
                     </Stack>
                 </Toolbar>

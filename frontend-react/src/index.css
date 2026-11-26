@@ -1,3 +1,6 @@
+/* Hoja de estilos base generada por la plantilla inicial de Vite + React */
+
+/* Variables CSS globales de paleta, tipografía y esquema claro */
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -30,6 +33,7 @@
   }
 }
 
+/* Sobrescribe las variables CSS cuando el sistema operativo usa modo oscuro */
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;
@@ -50,10 +54,12 @@
   }
 }
 
+/* Elimina el margen por defecto del cuerpo del documento */
 body {
   margin: 0;
 }
 
+/* Contenedor principal raíz de la plantilla base */
 #root {
   width: 1126px;
   max-width: 100%;
@@ -66,6 +72,7 @@ body {
   box-sizing: border-box;
 }
 
+/* Tipografía base para encabezados h1 y h2 */
 h1,
 h2 {
   font-family: var(--heading);
@@ -73,6 +80,7 @@ h2 {
   color: var(--text-h);
 }
 
+/* Tamaño y espaciado del título principal */
 h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
@@ -82,6 +90,8 @@ h1 {
     margin: 20px 0;
   }
 }
+
+/* Tamaño y espaciado de subtítulos */
 h2 {
   font-size: 24px;
   line-height: 118%;
@@ -91,10 +101,13 @@ h2 {
     font-size: 20px;
   }
 }
+
+/* Quita el margen por defecto de los párrafos */
 p {
   margin: 0;
 }
 
+/* Fuente monoespaciada para fragmentos de código y contador */
 code,
 .counter {
   font-family: var(--mono);
@@ -103,6 +116,7 @@ code,
   color: var(--text-h);
 }
 
+/* Caja resaltada para etiquetas de código en línea */
 code {
   font-size: 15px;
   line-height: 135%;

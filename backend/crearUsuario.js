@@ -1,22 +1,29 @@
+// Importa path para ubicar el archivo backend/.env desde cualquier directorio de ejecución
 const path = require("path")
+// Importa Mongoose para conectarse a la base de datos MongoDB (local o Atlas)
 const mongoose = require("mongoose")
+// Importa bcrypt para encriptar la contraseña antes de almacenarla
 const bcrypt = require("bcrypt")
+// Carga las variables de entorno definidas en backend/.env
 require("dotenv").config({ path: path.join(__dirname, ".env") })
 
+// Importa el modelo Usuario para crear o actualizar el administrador
 const Usuario = require("./models/Usuario")
-const Alumno = require("./models/Alumno")
-const Docente = require("./models/Docente")
-const Materia = require("./models/Materia")
 
+// Script auxiliar que crea (o actualiza si ya existe) el usuario administrador de prueba
 async function crearUsuario() {
     try {
-        const uri = process.env.MONGO_URI || "mongodb://localhost:27017/basededatos"
-        await mongoose.connect(uri)
+        // Conecta a MongoDB usando la URI definida en .env
+        await mongoose.connect(process.env.MONGO_URI)
 
+        // Define las credenciales ficticias del usuario administrador
         const email = "admin@sga.com"
-        const password = "ClaveDePrueba123!"
+        const password = "claveAdmin123"
+
+        // Genera el hash seguro de la contraseña con 10 rondas de sal
         const hash = await bcrypt.hash(password, 10)
 
+        // Crea el usuario administrador o actualiza su contraseña/datos si el correo ya existía
         await Usuario.findOneAndUpdate(
             { email },
             {
@@ -28,88 +35,18 @@ async function crearUsuario() {
             { upsert: true, returnDocument: "after" }
         )
 
-        const totalAlumnos = await Alumno.countDocuments()
-        if (totalAlumnos === 0) {
-            await Alumno.insertMany([
-                {
-                    legajo: 1001,
-                    nombre: "Ana Martínez",
-                    carrera: "Tecnicatura Universitaria en Programación",
-                    correo: "ana.martinez@sga.edu.ar"
-                },
-                {
-                    legajo: 1002,
-                    nombre: "Juan Carlos Gómez",
-                    carrera: "Ingeniería en Sistemas",
-                    correo: "juan.gomez@sga.edu.ar"
-                },
-                {
-                    legajo: 1023,
-                    nombre: "Ramón Díaz",
-                    carrera: "Tecnicatura Universitaria en Programación",
-                    correo: "ramon.diaz@sga.edu.ar"
-                }
-            ])
-        }
-
-        const totalDocentes = await Docente.countDocuments()
-        if (totalDocentes === 0) {
-            await Docente.insertMany([
-                {
-                    dni: 30111222,
-                    nombre: "Irina Silva",
-                    especialidad: "Programación IV",
-                    correo: "irina.silva@sga.edu.ar"
-                },
-                {
-                    dni: 28444555,
-                    nombre: "Rocío Fernández",
-                    especialidad: "Bases de Datos",
-                    correo: "rocio.fernandez@sga.edu.ar"
-                }
-            ])
-        }
-
-        const totalMaterias = await Materia.countDocuments()
-        if (totalMaterias === 0) {
-            await Materia.insertMany([
-                {
-                    codigo: "PRG1",
-                    nombre: "Programación I",
-                    descripcion: "Fundamentos de algoritmos y lógica de programación",
-                    cargaHoraria: 64,
-                    estado: "activa"
-                },
-                {
-                    codigo: "PRG3",
-                    nombre: "Programación III",
-                    descripcion: "Desarrollo web frontend y asincronía",
-                    cargaHoraria: 96,
-                    estado: "activa"
-                },
-                {
-                    codigo: "PRG4",
-                    nombre: "Programación IV",
-                    descripcion: "Desarrollo full-stack con React, Express y MongoDB",
-                    cargaHoraria: 96,
-                    estado: "activa"
-                },
-                {
-                    codigo: "BD1",
-                    nombre: "Bases de Datos I",
-                    descripcion: "Modelado de datos relacional y NoSQL",
-                    cargaHoraria: 64,
-                    estado: "activa"
-                }
-            ])
-        }
-
-        console.log("Datos iniciales verificados correctamente en MongoDB")
+        // Informa por consola el resultado de la operación
+        console.log("Usuario administrador creado/actualizado correctamente")
+        console.log("Email:", email)
     } catch (error) {
-        console.error("Error al inicializar datos:", error.message)
+        // Muestra el detalle si ocurrió un error de conexión o guardado y marca código de fallo
+        console.error("Error al crear el usuario administrador:", error.message)
+        process.exitCode = 1
     } finally {
+        // Cierra siempre la conexión con MongoDB para finalizar el proceso
         await mongoose.disconnect()
     }
 }
 
+// Ejecuta la función al correr el script con Node
 crearUsuario()

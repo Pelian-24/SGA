@@ -1,9 +1,12 @@
+// Importa componentes de interfaz de Material UI para el bloque de bienvenida
 import Box from "@mui/material/Box"
 import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
 
-export default function Inicio(){
+// Página principal de bienvenida mostrada al ingresar al SGA
+export default function Inicio() {
     return (
+        // Tarjeta destacada con degradado suave basado en el tema activo
         <Paper
             elevation={0}
             sx={{
@@ -17,7 +20,9 @@ export default function Inicio(){
                 background: theme => `linear-gradient(135deg, ${theme.palette.background.paper} 55%, ${theme.palette.action.hover} 100%)`
             }}
         >
+            {/* Contenedor de texto con ancho máximo para mantener una lectura cómoda */}
             <Box sx={{ maxWidth: 720 }}>
+                {/* Título principal de la aplicación */}
                 <Typography
                     component="h1"
                     variant="h3"
@@ -30,6 +35,8 @@ export default function Inicio(){
                 >
                     Sistema de Gestión Académica
                 </Typography>
+
+                {/* Mensaje introductorio que invita a recorrer el menú superior */}
                 <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, lineHeight: 1.7 }}>
                     Bienvenido/a al sistema. Desde el menú podés acceder
                     a las secciones disponibles.
